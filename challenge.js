@@ -18,6 +18,7 @@ window.initGame = function () {
     }
 
     const commandsArray = input.split('\n ');
+    // commandsArray = ['5 3' ,' 1 1 s', 'ffffff',' 2 1 w' , 'flfffffrrfffffff', '0 3 w', 'LLFFFLFLFL']
     let instructions;
     let coordinates;
 
@@ -58,19 +59,21 @@ window.initGame = function () {
       robos: [{
         x: 1,
         y: 1,
-        o: 'S',
+        o: 's',
         command: 'ffffff'
-      }, {
+      },
+      {
         x: 2,
         y: 1,
-        o: 'W',
+        o: 'w',
         command: 'flfffffrrfffffff'
       }, {
         x: 0,
         y: 3,
-        o: 'W',
+        o: 'w',
         command: 'LLFFFLFLFL'
-      }]
+      }
+      ]
     };
 
 
@@ -104,15 +107,48 @@ window.initGame = function () {
     // cause it to leave the playfield.
 
     // write robot logic here
-    function moveRover(parsed) {
 
-      //console.log(parsed);
+    let currentPos;
 
+    let i;
+    for (i = 0; i < robos.length; i++) {
+      let xCoord = robos[i].x;
+      let yCoord = robos[i].y;
+      let orientation = robos[i].o;
+      let command = robos[i].command;
+      currentPos = `Robot ${i} Status: (${xCoord}, ${yCoord}, ${orientation}). Commands: ${command}.`;
+      console.log(currentPos);
 
+      let movementInstructions = robos[i].command.split('');
 
+      movementInstructions.map(move => {
+        if (move.toUpperCase() == 'F') {
+          determineOrientation(orientation)
+        } else if (move.toUpperCase() == 'L') {
+        } else if (move.toUpperCase() == 'R') {
+        }
+      })
     }
 
-    moveRover(robos);
+
+    // Update the state here
+    function determineOrientation(orientation) {
+      // if 'F', check this first:
+      if (orientation.toUpperCase() == 'N') {
+        robos[i].y += 1;
+      } else if (orientation.toUpperCase() == 'E') {
+        robos[i].x += 1;
+      } else if (orientation.toUpperCase() == 'S') {
+        robos[i].y -= 1;
+      } else if (orientation.toUpperCase() == 'W') {
+        robos[i].x -= 1;
+      }
+    }
+
+    //console.log(currentPos);
+    console.log('is it updated here?', robos)
+
+
 
     // return the mutated robos object from the input to match the new state
     // return ???;
