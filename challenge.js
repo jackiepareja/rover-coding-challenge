@@ -19,6 +19,7 @@ window.initGame = function () {
 
     const commandsArray = input.split('\n ');
     // commandsArray = ['5 3' ,' 1 1 s', 'ffffff',' 2 1 w' , 'flfffffrrfffffff', '0 3 w', 'LLFFFLFLFL']
+    // 1, 1, S => 'ffffff' => 1, -5, s || 2, 1, w => 'flfffffrrfffffff' => 1, 3 N || 0, 3, w => LLFFFLFLFL
     let instructions;
     let coordinates;
 
@@ -109,41 +110,64 @@ window.initGame = function () {
     // write robot logic here
 
     let currentPos;
-
     let i;
+    let commandStack;
+
+    // FIXME: Optimize Cardinal changes
+    // const cardinalDirections = ['N', 'E', 'S', 'W'];
+    // cardinalDirections.map(cardinal => console.log(cardinal));
+
     for (i = 0; i < robos.length; i++) {
       let xCoord = robos[i].x;
       let yCoord = robos[i].y;
       let orientation = robos[i].o;
       let command = robos[i].command;
       currentPos = `Robot ${i} Status: (${xCoord}, ${yCoord}, ${orientation}). Commands: ${command}.`;
-      console.log(currentPos);
+      //console.log(currentPos);
+      //commandStack = robos[i].command.split('');
+      console.log(robos[i].command.length < 1)
 
-      let movementInstructions = robos[i].command.split('');
 
-      movementInstructions.map(move => {
-        if (move.toUpperCase() == 'F') {
-          determineOrientation(orientation)
-        } else if (move.toUpperCase() == 'L') {
-        } else if (move.toUpperCase() == 'R') {
-        }
-      })
+      // setTimeout(function () {
+      //   console.log(commandStack.shift())
+      //   console.log(commandStack)
+      // }, 3000)
     }
 
+    // detect orientation first,
+    // based on orientation move
+    // based on orientation, turn and update orientation.
 
-    // Update the state here
-    function determineOrientation(orientation) {
-      // if 'F', check this first:
-      if (orientation.toUpperCase() == 'N') {
+
+
+
+    function detectOrientation(cardinal) {
+      if (cardinal.toUpperCase() == 'N') {
         robos[i].y += 1;
-      } else if (orientation.toUpperCase() == 'E') {
+      } else if (cardinal.toUpperCase() == 'E') {
         robos[i].x += 1;
-      } else if (orientation.toUpperCase() == 'S') {
+      } else if (cardinal.toUpperCase() == 'S') {
         robos[i].y -= 1;
-      } else if (orientation.toUpperCase() == 'W') {
+      } else if (cardinal.toUpperCase() == 'W') {
         robos[i].x -= 1;
       }
     }
+
+    function moveLocation() {
+      if (instruction.toUpperCase() == 'F') {
+        // move forward
+      } else if (instruction.toUpperCase() == 'L') {
+        // turn left
+      } else if (instruction.toUpperCase() == 'R') {
+        // turn right
+      }
+    }
+
+    function changeOrientation() {
+      // change orientation
+    }
+
+
 
     //console.log(currentPos);
     console.log('is it updated here?', robos)
