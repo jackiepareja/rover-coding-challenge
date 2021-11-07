@@ -123,15 +123,12 @@ window.initGame = function () {
       let orientation = robos[i].o;
       let command = robos[i].command;
       currentPos = `Robot ${i} Status: (${xCoord}, ${yCoord}, ${orientation}). Commands: ${command}.`;
-      //console.log(currentPos);
-      //commandStack = robos[i].command.split('');
-      console.log(robos[i].command.length < 1)
+      commandStack = robos[i].command.split('');
+
+      console.log(command)
 
 
-      // setTimeout(function () {
-      //   console.log(commandStack.shift())
-      //   console.log(commandStack)
-      // }, 3000)
+
     }
 
     // detect orientation first,
@@ -163,13 +160,8 @@ window.initGame = function () {
       }
     }
 
-    function changeOrientation() {
-      // change orientation
-    }
 
 
-
-    //console.log(currentPos);
     console.log('is it updated here?', robos)
 
 
