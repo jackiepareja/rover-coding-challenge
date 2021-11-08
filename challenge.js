@@ -121,7 +121,7 @@ window.initGame = function () {
         );
 
         if (outOfBoundaries && scent) {
-          // ...
+          // FIXME: Add out of boundaries & scent logic 
         } else {
           // Move robot
           robot.x = newPosition.x;
