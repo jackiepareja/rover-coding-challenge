@@ -1,91 +1,85 @@
 'use strict';
+
+/**
+   * Remaining To Dos:
+   * 1. Add logic where remaining robos can't pass through 'dead grids'.
+   * 2. Display robo command changes on browser. (canvas api?)
+   * 3. Fix parseInput - returned parsed object.robos isn't being accepted by the tickRobos() method.
+   * 4. Error on line 236: robo is being read as undefined. Fixed
+   */
+
+class Rover {
+  constructor(x, y, o, command) {
+    this.x = x;
+    this.y = y;
+    this.o = o;
+    this.command = command;
+  }
+}
+
+function moveForward(robot) {
+  const { o, x, y } = robot;
+
+  const newPosition = { x, y };
+
+  switch (o.toUpperCase()) {
+    case 'N': newPosition.y += 1; break;
+    case 'E': newPosition.x += 1; break;
+    case 'S': newPosition.y -= 1; break;
+    case 'W': newPosition.x -= 1; break;
+  }
+
+  return newPosition;
+}
+
+function rotate(robot, direction) {
+  switch (robot.o.toUpperCase()) {
+    case 'N':
+      return direction === 'R' ? 'E' : 'W';
+    case 'E':
+      return direction === 'R' ? 'S' : 'N';
+    case 'S':
+      return direction === 'R' ? 'W' : 'E';
+    case 'W':
+      return direction === 'R' ? 'N' : 'S';
+  }
+}
+
 /* globals _, engine */
 window.initGame = function () {
-  console.log('initgame');
-
+  //console.log('initgame');
+  const limits = [];
   const command =
     '5 3 \n 1 1 s\n ffffff\n 2 1 w \n flfffffrrfffffff\n 0 3 w\n LLFFFLFLFL';
+  let parsed;
 
   const parseInput = (input) => {
-
-    class Rover {
-      constructor(x, y, o, command) {
-        this.x = x;
-        this.y = y;
-        this.o = o;
-        this.command = command;
-      }
-    }
-
     const commandsArray = input.split('\n ');
-    // commandsArray = ['5 3' ,' 1 1 s', 'ffffff',' 2 1 w' , 'flfffffrrfffffff', '0 3 w', 'LLFFFLFLFL']
-    // 1, 1, S => 'ffffff' => 1, -5, s || 2, 1, w => 'flfffffrrfffffff' => 1, 3 N || 0, 3, w => LLFFFLFLFL
-    let instructions;
-    let coordinates;
-
-    let robos = [];
-    let parsed = {};
-
+    const bounds = commandsArray[0].trim().split(' ');
+    const robos = [];
 
     for (let i = 1; i < commandsArray.length; i++) {
-      let bounds = commandsArray[0];
-      if (i % 2 == 0) {
-        // instructions ffffff
-        // instructions flfffffrrfffffff
-        // instructions LLFFFLFLFL
-        instructions = commandsArray[i];
-      } else if (i % 2 == 0 + 1) {
-        coordinates = commandsArray[i].split(' ');
-        // (3)['1', '1', 's']
-        // (4)['2', '1', 'w', '']
-        // (3)['0', '3', 'w']
-        // FIXME: roverObj[0].command is missing the third element and the first object.command is undefined.
-        let roverObj = new Rover(coordinates[0], coordinates[1], coordinates[2], instructions);
+      const instructions = commandsArray[i + 1];
+
+      if (i % 2 == 0 + 1) {
+        const [x, y, o] = commandsArray[i].split(' ');
+        let roverObj = new Rover(Number(x), Number(y), o, instructions);
 
         robos.push(roverObj)
-
-
-        parsed = Object.assign({}, robos)
-        parsed = { ...parsed, bounds }
-
       }
-
     }
 
-    //console.log(parsed)
-
-    //replace this with a correct object
-    parsed = {
-      bounds: [5, 3],
-      robos: [{
-        x: 1,
-        y: 1,
-        o: 's',
-        command: 'ffffff'
-      },
-      {
-        x: 2,
-        y: 1,
-        o: 'w',
-        command: 'flfffffrrfffffff'
-      }, {
-        x: 0,
-        y: 3,
-        o: 'w',
-        command: 'LLFFFLFLFL'
-      }
-      ]
-    };
-
-
+    parsed = { robos, bounds };
+    console.log('checking parsed obj', parsed)
 
     return parsed;
   };
 
-  // this function replaces the robos after they complete one instruction
-  // from their commandset
+
+
   const tickRobos = (robos) => {
-    console.log('tickrobos');
+    console.log('robos', robos)
+    //console.log('tickrobos');
     // 
     // task #2
     //
@@ -107,75 +101,90 @@ window.initGame = function () {
     // of its commandset–encounters this 'scent', it should refuse any commands that would
     // cause it to leave the playfield.
 
-    // write robot logic here
+    //console.log({ parsed })
 
-    let currentPos;
-    let i;
-    let commandStack;
+    for (let i = 0; i < robos.length; i++) {
+      const robot = robos[i];
 
-    // FIXME: Optimize Cardinal changes
-    // const cardinalDirections = ['N', 'E', 'S', 'W'];
-    // cardinalDirections.map(cardinal => console.log(cardinal));
+      console.log('Initial state', robot);
 
-    for (i = 0; i < robos.length; i++) {
-      let xCoord = robos[i].x;
-      let yCoord = robos[i].y;
-      let orientation = robos[i].o;
-      let command = robos[i].command;
-      currentPos = `Robot ${i} Status: (${xCoord}, ${yCoord}, ${orientation}). Commands: ${command}.`;
-      commandStack = robos[i].command.split('');
-
-      console.log(command)
-
-
-
-    }
-
-    // detect orientation first,
-    // based on orientation move
-    // based on orientation, turn and update orientation.
-
-
-
-
-    function detectOrientation(cardinal) {
-      if (cardinal.toUpperCase() == 'N') {
-        robos[i].y += 1;
-      } else if (cardinal.toUpperCase() == 'E') {
-        robos[i].x += 1;
-      } else if (cardinal.toUpperCase() == 'S') {
-        robos[i].y -= 1;
-      } else if (cardinal.toUpperCase() == 'W') {
-        robos[i].x -= 1;
+      if (!robot.command) {
+        continue;
       }
-    }
 
-    function moveLocation() {
-      if (instruction.toUpperCase() == 'F') {
-        // move forward
-      } else if (instruction.toUpperCase() == 'L') {
-        // turn left
-      } else if (instruction.toUpperCase() == 'R') {
-        // turn right
+      let command = robot.command[0].toUpperCase();
+
+      if (command === 'F') {
+
+        let scent = false
+        limits.forEach(limit => {
+          if (robot.x == limit.x && robot.y == limit.y) {
+            scent = true;
+          }
+        })
+
+        const prevPos = { x: robot.x, y: robot.y };
+
+        // Check if out of bounds
+        const [limitX, limitY] = parsed.bounds;
+
+        const newPosition = moveForward(robot);
+
+        const outOfBoundaries = (
+          newPosition.x > limitX ||
+          newPosition.y > limitY ||
+          newPosition.x < 0 ||
+          newPosition.y < 0
+        );
+
+        if (outOfBoundaries && scent) {
+          // ...
+        } else {
+          // Move robot
+          robot.x = newPosition.x;
+          robot.y = newPosition.y;
+
+          if (outOfBoundaries) {
+            limits.push(prevPos);
+            robot.died = prevPos;
+          }
+        }
+      } else {
+        robot.o = rotate(robot, command);
       }
+
+      robot.command = robot.command.slice(1);
+
+      console.log(robot);
     }
 
-
-
-    console.log('is it updated here?', robos)
-
-
-
-    // return the mutated robos object from the input to match the new state
-    // return ???;
+    return robos;
   };
-  // mission summary function
+
   const missionSummary = (robos) => {
+    console.log('undefined robos', robos)
     //
     // task #3
     //
     // summarize the mission and inject the results into the DOM elements referenced in readme.md
     //
+
+    robos.forEach((robot, idx) => {
+
+      const survived = !robot.died;
+
+      const li = document.createElement('li');
+      console.log('robot.died', robot)
+      if (survived) {
+        li.innerHTML = `Robot ${idx} Position: ${robot.x}, ${robot.y} | Orientation: ${robot.o}`;
+        document.querySelector('#robots').appendChild(li);
+      } else {
+        li.innerHTML = `Robot ${idx} I died going ${robot.o} from coordinates: ${robot.died.x}, ${robot.died.y}`;
+        document.querySelector('#lostRobots').appendChild(li);
+      }
+    });
+
+
     return;
   };
 
@@ -187,4 +196,3 @@ window.initGame = function () {
     command: command
   };
 };
-
