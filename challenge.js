@@ -120,17 +120,14 @@ window.initGame = function () {
           newPosition.y < 0
         );
 
-        if (outOfBoundaries && scent) {
-          // FIXME: Add out of boundaries & scent logic 
-        } else {
+        if (!outOfBoundaries) {
           // Move robot
           robot.x = newPosition.x;
           robot.y = newPosition.y;
-
-          if (outOfBoundaries) {
-            limits.push(prevPos);
+          
+        } else {
+          limits.push(prevPos);
             robot.died = prevPos;
-          }
         }
       } else {
         robot.o = rotate(robot, command);
